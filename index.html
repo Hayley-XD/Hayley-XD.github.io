@@ -3,97 +3,387 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>托福连词成句练习</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>简单拖拽造句子</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            width: 90%;
+            max-width: 800px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+        
+        .target-sentence {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 18px;
+            color: #2c3e50;
+            border-left: 5px solid #3498db;
+        }
+        
+        .drop-area {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            min-height: 80px;
+            margin-bottom: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            border: 2px dashed #bdc3c7;
+        }
+        
+        .word-box {
+            background: #3498db;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: move;
+            font-size: 16px;
+            transition: all 0.3s;
+            user-select: none;
+        }
+        
+        .word-box:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+        
+        .word-box.dragging {
+            opacity: 0.5;
+        }
+        
+        .drop-zone {
+            background: #ecf0f1;
+            padding: 12px 20px;
+            border-radius: 8px;
+            min-width: 80px;
+            min-height: 45px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #7f8c8d;
+            border: 2px dashed #95a5a6;
+            transition: all 0.3s;
+        }
+        
+        .drop-zone.hover {
+            background: #d6eaf8;
+            border-color: #3498db;
+        }
+        
+        .drop-zone.filled {
+            background: #d5f4e6;
+            color: #27ae60;
+            border: 2px solid #27ae60;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+        
+        #check-btn {
+            background: #2ecc71;
+            color: white;
+        }
+        
+        #reset-btn {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .feedback {
+            text-align: center;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 18px;
+            display: none;
+        }
+        
+        .correct {
+            background: #d5f4e6;
+            color: #27ae60;
+            border: 2px solid #27ae60;
+        }
+        
+        .incorrect {
+            background: #fadbd8;
+            color: #e74c3c;
+            border: 2px solid #e74c3c;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1><i class="fas fa-language"></i> 托福连词成句练习</h1>
-            <div class="score-board">
-                <span>得分: <span id="score">0</span></span>
-                <span>进度: <span id="progress">1</span>/5</span>
-                <button id="hint-btn"><i class="fas fa-lightbulb"></i> 提示</button>
-                <button id="reset-btn"><i class="fas fa-redo"></i> 重置</button>
+        <h1>📝 拖拽单词完成句子</h1>
+        
+        <div class="target-sentence">
+            <strong>目标句子:</strong> I enjoy reading books in my free time.
+        </div>
+        
+        <div class="drop-area" id="sentence-area">
+            <!-- 这里将显示拖拽的单词 -->
+            <div class="drop-zone" id="slot1"></div>
+            <div class="drop-zone" id="slot2"></div>
+            <div class="drop-zone" id="slot3"></div>
+            <div class="drop-zone" id="slot4"></div>
+            <div class="drop-zone" id="slot5"></div>
+            <div class="drop-zone" id="slot6"></div>
+        </div>
+        
+        <div class="word-bank">
+            <h2>拖拽这些单词：</h2>
+            <div id="word-container">
+                <!-- 可拖拽的单词 -->
+                <div class="word-box" draggable="true" data-word="I">I</div>
+                <div class="word-box" draggable="true" data-word="enjoy">enjoy</div>
+                <div class="word-box" draggable="true" data-word="reading">reading</div>
+                <div class="word-box" draggable="true" data-word="books">books</div>
+                <div class="word-box" draggable="true" data-word="in">in</div>
+                <div class="word-box" draggable="true" data-word="my">my</div>
+                <div class="word-box" draggable="true" data-word="free">free</div>
+                <div class="word-box" draggable="true" data-word="time.">time.</div>
             </div>
-        </header>
-
-        <main>
-            <!-- 句子区域 -->
-            <section class="sentence-section">
-                <h2><i class="fas fa-pencil-alt"></i> 构建句子</h2>
-                <div class="sentence-container">
-                    <div class="original-sentence">
-                        <h3>目标句子:</h3>
-                        <p id="target-sentence">Despite the heavy rain, the football match continued as scheduled.</p>
-                    </div>
-                    
-                    <div class="drag-sentence">
-                        <h3>你的答案:</h3>
-                        <div class="drop-zones">
-                            <!-- 空白放置区域 -->
-                            <div class="drop-zone" data-id="1"></div>
-                            <div class="drop-zone" data-id="2"></div>
-                            <div class="drop-zone" data-id="3"></div>
-                            <div class="drop-zone" data-id="4"></div>
-                            <div class="drop-zone" data-id="5"></div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- 单词区域 -->
-            <section class="words-section">
-                <h2><i class="fas fa-shuffle"></i> 拖放单词到正确位置</h2>
-                <div class="words-container" id="word-bank">
-                    <!-- 可拖拽的单词 -->
-                    <div class="word" draggable="true" data-word="Despite">Despite</div>
-                    <div class="word" draggable="true" data-word="the">the</div>
-                    <div class="word" draggable="true" data-word="heavy">heavy</div>
-                    <div class="word" draggable="true" data-word="rain,">rain,</div>
-                    <div class="word" draggable="true" data-word="the">the</div>
-                    <div class="word" draggable="true" data-word="football">football</div>
-                    <div class="word" draggable="true" data-word="match">match</div>
-                    <div class="word" draggable="true" data-word="continued">continued</div>
-                    <div class="word" draggable="true" data-word="as">as</div>
-                    <div class="word" draggable="true" data-word="scheduled.">scheduled.</div>
-                </div>
-            </section>
-
-            <!-- 控制区域 -->
-            <section class="control-section">
-                <button id="check-btn"><i class="fas fa-check-circle"></i> 检查答案</button>
-                <button id="next-btn" disabled><i class="fas fa-arrow-right"></i> 下一题</button>
-                <button id="show-answer-btn"><i class="fas fa-eye"></i> 显示答案</button>
-            </section>
-
-            <!-- 反馈区域 -->
-            <section class="feedback-section">
-                <div id="feedback" class="hidden">
-                    <i class="fas fa-comment-dots"></i>
-                    <span id="feedback-text"></span>
-                </div>
-            </section>
-
-            <!-- 题目列表 -->
-            <section class="questions-section">
-                <h3><i class="fas fa-list"></i> 题目列表</h3>
-                <div class="questions-list">
-                    <button class="question-btn active" data-id="1">1. 让步状语从句</button>
-                    <button class="question-btn" data-id="2">2. 定语从句</button>
-                    <button class="question-btn" data-id="3">3. 虚拟语气</button>
-                    <button class="question-btn" data-id="4">4. 倒装句</button>
-                    <button class="question-btn" data-id="5">5. 复杂句型</button>
-                </div>
-            </section>
-        </main>
-
-        <footer>
-            <p>© 2023 托福英语练习 | 难度: 中等 | 建议时间: 5-10分钟/题</p>
-        </footer>
+        </div>
+        
+        <div class="controls">
+            <button id="check-btn">检查答案</button>
+            <button id="reset-btn">重新开始</button>
+        </div>
+        
+        <div id="feedback" class="feedback"></div>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        // 获取所有可拖拽的单词
+        const words = document.querySelectorAll('.word-box');
+        const dropZones = document.querySelectorAll('.drop-zone');
+        const feedback = document.getElementById('feedback');
+        const checkBtn = document.getElementById('check-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        
+        // 正确答案
+        const correctAnswer = ['I', 'enjoy', 'reading', 'books', 'in', 'my', 'free', 'time.'];
+        
+        // 当前用户答案
+        let userAnswer = ['', '', '', '', '', '', '', ''];
+        
+        // 当前拖拽的单词
+        let draggedWord = null;
+        
+        // ========== 1. 拖拽开始 ==========
+        words.forEach(word => {
+            word.addEventListener('dragstart', function(e) {
+                // 设置被拖拽的单词
+                draggedWord = this;
+                this.classList.add('dragging');
+                
+                // 设置拖拽数据
+                e.dataTransfer.setData('text/plain', this.dataset.word);
+                e.dataTransfer.effectAllowed = 'move';
+            });
+            
+            word.addEventListener('dragend', function() {
+                this.classList.remove('dragging');
+                draggedWord = null;
+            });
+        });
+        
+        // ========== 2. 拖拽经过放置区域 ==========
+        dropZones.forEach((zone, index) => {
+            // 当拖拽元素进入放置区域
+            zone.addEventListener('dragover', function(e) {
+                e.preventDefault(); // 必须阻止默认行为
+                e.dataTransfer.dropEffect = 'move';
+                this.classList.add('hover');
+            });
+            
+            // 当拖拽元素离开放置区域
+            zone.addEventListener('dragleave', function() {
+                this.classList.remove('hover');
+            });
+            
+            // 当在放置区域释放拖拽元素
+            zone.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.classList.remove('hover');
+                
+                // 获取拖拽的单词
+                const word = e.dataTransfer.getData('text/plain');
+                
+                // 如果该位置已经有单词，先把它放回单词库
+                if (this.textContent) {
+                    returnWordToBank(this.textContent);
+                }
+                
+                // 放置新单词
+                this.textContent = word;
+                this.classList.add('filled');
+                
+                // 记录用户答案
+                userAnswer[index] = word;
+                
+                // 从单词库中移除已使用的单词
+                removeWordFromBank(word);
+                
+                // 播放拖拽音效（简单的控制台提示）
+                console.log(`✓ 放置单词: ${word} 到位置 ${index + 1}`);
+            });
+        });
+        
+        // ========== 3. 从单词库移除单词 ==========
+        function removeWordFromBank(word) {
+            words.forEach(w => {
+                if (w.dataset.word === word && w.style.display !== 'none') {
+                    w.style.display = 'none';
+                }
+            });
+        }
+        
+        // ========== 4. 将单词放回单词库 ==========
+        function returnWordToBank(word) {
+            words.forEach(w => {
+                if (w.dataset.word === word) {
+                    w.style.display = 'block';
+                }
+            });
+        }
+        
+        // ========== 5. 检查答案 ==========
+        checkBtn.addEventListener('click', function() {
+            // 检查是否所有位置都已填写
+            const allFilled = userAnswer.every(word => word !== '');
+            
+            if (!allFilled) {
+                showFeedback('请完成所有空格！', 'incorrect');
+                return;
+            }
+            
+            // 检查答案是否正确
+            let isCorrect = true;
+            for (let i = 0; i < correctAnswer.length; i++) {
+                if (userAnswer[i] !== correctAnswer[i]) {
+                    isCorrect = false;
+                    break;
+                }
+            }
+            
+            // 显示结果
+            if (isCorrect) {
+                showFeedback('🎉 恭喜！完全正确！句子是: "I enjoy reading books in my free time."', 'correct');
+                // 庆祝效果
+                dropZones.forEach(zone => {
+                    zone.style.animation = 'none';
+                    setTimeout(() => {
+                        zone.style.animation = 'pulse 0.5s';
+                    }, 10);
+                });
+            } else {
+                showFeedback('❌ 不正确，请再试一次！', 'incorrect');
+                // 错误提示效果
+                dropZones.forEach(zone => {
+                    zone.style.animation = 'none';
+                    setTimeout(() => {
+                        zone.style.animation = 'shake 0.5s';
+                    }, 10);
+                });
+            }
+        });
+        
+        // ========== 6. 重置游戏 ==========
+        resetBtn.addEventListener('click', function() {
+            // 清空所有放置区域
+            dropZones.forEach((zone, index) => {
+                if (zone.textContent) {
+                    returnWordToBank(zone.textContent);
+                }
+                zone.textContent = '';
+                zone.classList.remove('filled');
+                userAnswer[index] = '';
+            });
+            
+            // 显示所有单词
+            words.forEach(w => {
+                w.style.display = 'block';
+            });
+            
+            // 隐藏反馈
+            feedback.style.display = 'none';
+            
+            console.log('游戏已重置');
+        });
+        
+        // ========== 7. 显示反馈 ==========
+        function showFeedback(message, type) {
+            feedback.textContent = message;
+            feedback.className = 'feedback ' + type;
+            feedback.style.display = 'block';
+        }
+        
+        // ========== 8. 添加动画关键帧 ==========
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes pulse {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.05); }
+                100% { transform: scale(1); }
+            }
+            
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-5px); }
+                75% { transform: translateX(5px); }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        console.log('拖拽游戏已加载完成！');
+        console.log('试试拖拽单词到空白区域');
+    </script>
 </body>
 </html>
