@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>托福连词成句练习</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-language"></i> 托福连词成句练习</h1>
+            <div class="score-board">
+                <span>得分: <span id="score">0</span></span>
+                <span>进度: <span id="progress">1</span>/5</span>
+                <button id="hint-btn"><i class="fas fa-lightbulb"></i> 提示</button>
+                <button id="reset-btn"><i class="fas fa-redo"></i> 重置</button>
+            </div>
+        </header>
+
+        <main>
+            <!-- 句子区域 -->
+            <section class="sentence-section">
+                <h2><i class="fas fa-pencil-alt"></i> 构建句子</h2>
+                <div class="sentence-container">
+                    <div class="original-sentence">
+                        <h3>目标句子:</h3>
+                        <p id="target-sentence">Despite the heavy rain, the football match continued as scheduled.</p>
+                    </div>
+                    
+                    <div class="drag-sentence">
+                        <h3>你的答案:</h3>
+                        <div class="drop-zones">
+                            <!-- 空白放置区域 -->
+                            <div class="drop-zone" data-id="1"></div>
+                            <div class="drop-zone" data-id="2"></div>
+                            <div class="drop-zone" data-id="3"></div>
+                            <div class="drop-zone" data-id="4"></div>
+                            <div class="drop-zone" data-id="5"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 单词区域 -->
+            <section class="words-section">
+                <h2><i class="fas fa-shuffle"></i> 拖放单词到正确位置</h2>
+                <div class="words-container" id="word-bank">
+                    <!-- 可拖拽的单词 -->
+                    <div class="word" draggable="true" data-word="Despite">Despite</div>
+                    <div class="word" draggable="true" data-word="the">the</div>
+                    <div class="word" draggable="true" data-word="heavy">heavy</div>
+                    <div class="word" draggable="true" data-word="rain,">rain,</div>
+                    <div class="word" draggable="true" data-word="the">the</div>
+                    <div class="word" draggable="true" data-word="football">football</div>
+                    <div class="word" draggable="true" data-word="match">match</div>
+                    <div class="word" draggable="true" data-word="continued">continued</div>
+                    <div class="word" draggable="true" data-word="as">as</div>
+                    <div class="word" draggable="true" data-word="scheduled.">scheduled.</div>
+                </div>
+            </section>
+
+            <!-- 控制区域 -->
+            <section class="control-section">
+                <button id="check-btn"><i class="fas fa-check-circle"></i> 检查答案</button>
+                <button id="next-btn" disabled><i class="fas fa-arrow-right"></i> 下一题</button>
+                <button id="show-answer-btn"><i class="fas fa-eye"></i> 显示答案</button>
+            </section>
+
+            <!-- 反馈区域 -->
+            <section class="feedback-section">
+                <div id="feedback" class="hidden">
+                    <i class="fas fa-comment-dots"></i>
+                    <span id="feedback-text"></span>
+                </div>
+            </section>
+
+            <!-- 题目列表 -->
+            <section class="questions-section">
+                <h3><i class="fas fa-list"></i> 题目列表</h3>
+                <div class="questions-list">
+                    <button class="question-btn active" data-id="1">1. 让步状语从句</button>
+                    <button class="question-btn" data-id="2">2. 定语从句</button>
+                    <button class="question-btn" data-id="3">3. 虚拟语气</button>
+                    <button class="question-btn" data-id="4">4. 倒装句</button>
+                    <button class="question-btn" data-id="5">5. 复杂句型</button>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>© 2023 托福英语练习 | 难度: 中等 | 建议时间: 5-10分钟/题</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
